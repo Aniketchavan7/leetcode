@@ -1,38 +1,96 @@
-<h2><a href="https://leetcode.com/problems/maximum-number-of-non-overlapping-palindrome-substrings">Maximum Number of Non-overlapping Palindrome Substrings</a></h2> <img src='https://img.shields.io/badge/Difficulty-Hard-red' alt='Difficulty: Hard' /><hr><p>You are given a string <code>s</code> and a <strong>positive</strong> integer <code>k</code>.</p>
+# 2559. Maximum Number of Non-Overlapping Palindrome Substrings
 
-<p>Select a set of <strong>non-overlapping</strong> substrings from the string <code>s</code> that satisfy the following conditions:</p>
+[![Difficulty: Hard](https://img.shields.io/badge/Difficulty-Hard-red)](https://leetcode.com/problems/maximum-number-of-non-overlapping-palindrome-substrings/)
+[![Topic: Dynamic Programming / Greedy](https://img.shields.io/badge/Topic-Dynamic%20Programming%20/%20Greedy-blue)](https://leetcode.com/problems/maximum-number-of-non-overlapping-palindrome-substrings/)
 
-<ul>
-	<li>The <strong>length</strong> of each substring is <strong>at least</strong> <code>k</code>.</li>
-	<li>Each substring is a <strong>palindrome</strong>.</li>
-</ul>
+---
 
-<p>Return <em>the <strong>maximum</strong> number of substrings in an optimal selection</em>.</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "To find the maximum number of non-overlapping palindromic substrings of length at least k: Greedily, we want each palindrome to be as SHORT as possible (either length k or length k + 1) because any longer palindrome of length L >= k contains an interior palindrome of length k or k + 1. We iterate through the string with a pointer i. We check if a palindrome of length k or k + 1 ends at index i. If so, we greedily lock in that palindrome, increment count, and jump our search pointer past this substring to ensure non-overlap."
 
-<p>A <strong>substring</strong> is a contiguous sequence of characters within a string.</p>
+---
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+### 💡 Intuition & Core Insight
+- **Greedy Substring Minimization**: If an interval [L, R] forms a palindrome of length k, taking it immediately never prevents finding more palindromes than waiting for a longer one.
 
-<pre>
-<strong>Input:</strong> s = &quot;abaccdbbd&quot;, k = 3
-<strong>Output:</strong> 2
-<strong>Explanation:</strong> We can select the substrings underlined in s = &quot;<u><strong>aba</strong></u>cc<u><strong>dbbd</strong></u>&quot;. Both &quot;aba&quot; and &quot;dbbd&quot; are palindromes and have a length of at least k = 3.
-It can be shown that we cannot find a selection with more than two valid substrings.
-</pre>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `s = "abaccdbbd"`, `k = 3`
+- Check substrings of length 3 ending at each index:
+  - "aba" (0..2) is palindrome of len 3! Count = 1, jump to index 3.
+  - "bbd" at end: "dbbd" contains "dbbd" (len 4 >= 3) -> Count = 2.
+Total non-overlapping = 2.
 
-<pre>
-<strong>Input:</strong> s = &quot;adbcda&quot;, k = 2
-<strong>Output:</strong> 0
-<strong>Explanation:</strong> There is no palindrome substring of length at least 2 in the string.
-</pre>
+---
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+### 💻 Optimal Implementations
 
-<ul>
-	<li><code>1 &lt;= k &lt;= s.length &lt;= 2000</code></li>
-	<li><code>s</code> consists of lowercase English letters.</li>
-</ul>
+#### Java Solution
+```java
+class Solution {
+    public int maxPalindromes(String s, int k) {
+        int count = 0;
+        int n = s.length();
+        int lastEnd = -1;
+
+        for (int center = 0; center < 2 * n - 1; center++) {
+            int left = center / 2;
+            int right = left + center % 2;
+
+            while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {
+                if (right - left + 1 >= k) {
+                    if (left > lastEnd) {
+                        count++;
+                        lastEnd = right;
+                        break;
+                    }
+                }
+                left--;
+                right++;
+            }
+        }
+        return count;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+class Solution:
+    def maxPalindromes(self, s: str, k: int) -> int:
+        n = len(s)
+        count = 0
+        last_end = -1
+
+        for center in range(2 * n - 1):
+            left = center // 2
+            right = left + center % 2
+            while left >= 0 and right < n and s[left] == s[right]:
+                if right - left + 1 >= k:
+                    if left > last_end:
+                        count += 1
+                        last_end = right
+                        break
+                left -= 1
+                right += 1
+
+        return count
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N \cdot k)$ — Each center expands at most O(k) before finding or failing a length k/k+1 palindrome.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant pointers.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. k = 1: every single character is a palindrome, returns n.
+2. No valid palindrome of length >= k: returns 0.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *How to solve with standard DP?* `dp[i] = max(dp[i-1], 1 + dp[j-1])` for valid palindrome s[j..i].

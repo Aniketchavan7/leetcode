@@ -1,40 +1,85 @@
-<h2><a href="https://leetcode.com/problems/rotate-array">Rotate Array</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>Given an integer array <code>nums</code>, rotate the array to the right by <code>k</code> steps, where <code>k</code> is non-negative.</p>
+# 189. Rotate Array
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+[![Difficulty: Medium](https://img.shields.io/badge/Difficulty-Medium-orange)](https://leetcode.com/problems/rotate-array/)
+[![Topic: Two Pointers](https://img.shields.io/badge/Topic-Two%20Pointers-blue)](https://leetcode.com/problems/rotate-array/)
 
-<pre>
-<strong>Input:</strong> nums = [1,2,3,4,5,6,7], k = 3
-<strong>Output:</strong> [5,6,7,1,2,3,4]
-<strong>Explanation:</strong>
-rotate 1 steps to the right: [7,1,2,3,4,5,6]
-rotate 2 steps to the right: [6,7,1,2,3,4,5]
-rotate 3 steps to the right: [5,6,7,1,2,3,4]
-</pre>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "To rotate an array of length N to the right by k steps in-place with O(1) extra memory: First normalize k = k % n. Then apply the three-reversal trick: 1) Reverse the entire array. 2) Reverse the first k elements. 3) Reverse the remaining n - k elements."
 
-<pre>
-<strong>Input:</strong> nums = [-1,-100,3,99], k = 2
-<strong>Output:</strong> [3,99,-1,-100]
-<strong>Explanation:</strong> 
-rotate 1 steps to the right: [99,-1,-100,3]
-rotate 2 steps to the right: [3,99,-1,-100]
-</pre>
+---
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+### 💡 Intuition & Core Insight
+- **Why Reversals Work**:
+  - Initial: `[1, 2, 3, 4, | 5, 6, 7]` with k=3
+  - Reverse all: `[7, 6, 5, | 4, 3, 2, 1]` (puts the last k elements at the front, but backwards)
+  - Reverse first k: `[5, 6, 7, | 4, 3, 2, 1]` (restores order of rotated elements)
+  - Reverse rest: `[5, 6, 7, | 1, 2, 3, 4]` (restores order of remaining elements)
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
-	<li><code>-2<sup>31</sup> &lt;= nums[i] &lt;= 2<sup>31</sup> - 1</code></li>
-	<li><code>0 &lt;= k &lt;= 10<sup>5</sup></code></li>
-</ul>
+---
 
-<p>&nbsp;</p>
-<p><strong>Follow up:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [1, 2, 3, 4, 5, 6, 7]`, `k = 3`
+1. Reverse all: `[7, 6, 5, 4, 3, 2, 1]`
+2. Reverse `[0..2]`: `[5, 6, 7, 4, 3, 2, 1]`
+3. Reverse `[3..6]`: `[5, 6, 7, 1, 2, 3, 4]`
+Done!
 
-<ul>
-	<li>Try to come up with as many solutions as you can. There are at least <strong>three</strong> different ways to solve this problem.</li>
-	<li>Could you do it in-place with <code>O(1)</code> extra space?</li>
-</ul>
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+class Solution {
+    public void rotate(int[] nums, int k) {
+        int n = nums.length;
+        k %= n;
+        reverse(nums, 0, n - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, n - 1);
+    }
+
+    private void reverse(int[] nums, int start, int end) {
+        while (start < end) {
+            int tmp = nums[start];
+            nums[start++] = nums[end];
+            nums[end--] = tmp;
+        }
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+class Solution:
+    def rotate(self, nums: list[int], k: int) -> None:
+        n = len(nums)
+        k %= n
+        def reverse(start, end):
+            while start < end:
+                nums[start], nums[end] = nums[end], nums[start]
+                start += 1
+                end -= 1
+        reverse(0, n - 1)
+        reverse(0, k - 1)
+        reverse(k, n - 1)
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Three array segment reversals sum to 2N swaps, which is O(N).
+- **Space Complexity**: $\mathcal{O}(1)$ — In-place swaps with constant pointers.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. k >= n: k %= n prevents out-of-bounds.
+2. k == 0: array remains unchanged.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *Can we do cyclic replacements?* Yes, moving elements into their target spots using gcd(n, k) cycles.

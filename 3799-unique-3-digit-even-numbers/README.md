@@ -1,52 +1,95 @@
-<h2><a href="https://leetcode.com/problems/unique-3-digit-even-numbers">Unique 3-Digit Even Numbers</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>You are given an array of digits called <code>digits</code>. Your task is to determine the number of <strong>distinct</strong> three-digit even numbers that can be formed using these digits.</p>
+# 3799. Unique 3-Digit Even Numbers
 
-<p><strong>Note</strong>: Each <em>copy</em> of a digit can only be used <strong>once per number</strong>, and there may <strong>not</strong> be leading zeros.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/unique-3-digit-even-numbers/)
+[![Topic: Hash Set / Combinatorics](https://img.shields.io/badge/Topic-Hash%20Set%20/%20Combinatorics-blue)](https://leetcode.com/problems/unique-3-digit-even-numbers/)
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">digits = [1,2,3,4]</span></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "To find all unique 3-digit even numbers that can be formed using digits from the array: The search space of 3-digit even numbers is tiny—strictly between 100 and 998 with step 2 (at most 450 numbers!). Instead of generating all permutations of the input array, we invert the check: iterate through every even integer from 100 to 998, count its three digits, and check if our input digit frequency array contains enough of each digit."
 
-<p><strong>Output:</strong> <span class="example-io">12</span></p>
+---
 
-<p><strong>Explanation:</strong> The 12 distinct 3-digit even numbers that can be formed are 124, 132, 134, 142, 214, 234, 312, 314, 324, 342, 412, and 432. Note that 222 cannot be formed because there is only 1 copy of the digit 2.</p>
-</div>
+### 💡 Intuition & Core Insight
+- **Looping Over Solution Space vs Input Combinations**: Iterating over 450 candidate numbers is O(1) constant time, eliminating sorting, duplicate permutation generation, and recursion.
 
-<p><strong class="example">Example 2:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">digits = [0,2,2]</span></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `digits = [2, 1, 3, 0]`
+- Count map: `{0:1, 1:1, 2:1, 3:1}`
+- Check 102: digits 1, 0, 2 are in map -> valid!
+- Check 120: digits 1, 2, 0 are in map -> valid!
+- Check 130, 132, 210, 230, 310, 312, 320 -> collected in sorted order.
 
-<p><strong>Output:</strong> <span class="example-io">2</span></p>
+---
 
-<p><strong>Explanation:</strong> The only 3-digit even numbers that can be formed are 202 and 220. Note that the digit 2 can be used twice because it appears twice in the array.</p>
-</div>
+### 💻 Optimal Implementations
 
-<p><strong class="example">Example 3:</strong></p>
+#### Java Solution
+```java
+class Solution {
+    public int[] findEvenNumbers(int[] digits) {
+        int[] freq = new int[10];
+        for (int d : digits) freq[d]++;
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">digits = [6,6,6]</span></p>
+        List<Integer> list = new ArrayList<>();
+        for (int num = 100; num <= 998; num += 2) {
+            int d1 = num / 100;
+            int d2 = (num / 10) % 10;
+            int d3 = num % 10;
 
-<p><strong>Output:</strong> <span class="example-io">1</span></p>
+            int[] needed = new int[10];
+            needed[d1]++;
+            needed[d2]++;
+            needed[d3]++;
 
-<p><strong>Explanation:</strong> Only 666 can be formed.</p>
-</div>
+            boolean valid = true;
+            for (int i = 0; i < 10; i++) {
+                if (needed[i] > freq[i]) {
+                    valid = false;
+                    break;
+                }
+            }
+            if (valid) list.add(num);
+        }
 
-<p><strong class="example">Example 4:</strong></p>
+        int[] res = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) res[i] = list.get(i);
+        return res;
+    }
+}
+```
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">digits = [1,3,5]</span></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def findEvenNumbers(self, digits: list[int]) -> list[int]:
+        counts = Counter(digits)
+        res = []
+        for num in range(100, 1000, 2):
+            d1 = num // 100
+            d2 = (num // 10) % 10
+            d3 = num % 10
+            needed = Counter([d1, d2, d3])
+            if all(counts[d] >= needed[d] for d in needed):
+                res.append(num)
+        return res
+```
 
-<p><strong>Output:</strong> <span class="example-io">0</span></p>
+---
 
-<p><strong>Explanation:</strong> No even 3-digit numbers can be formed.</p>
-</div>
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N + 450)$ — O(N) to count digits, followed by checking exactly 450 candidate numbers.
+- **Space Complexity**: $\mathcal{O}(1)$ — Fixed 10-element digit frequency array.
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>3 &lt;= digits.length &lt;= 10</code></li>
-	<li><code>0 &lt;= digits[i] &lt;= 9</code></li>
-</ul>
+### ⚠️ Edge Cases & Interview Traps
+1. Cannot have leading zeroes: range starts at 100.
+2. Must be even: loop step is 2.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if K-digit numbers are requested?* For large K, backtrack through the digit frequency counts.

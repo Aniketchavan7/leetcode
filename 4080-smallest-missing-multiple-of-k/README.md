@@ -1,37 +1,71 @@
-<h2><a href="https://leetcode.com/problems/smallest-missing-multiple-of-k">Smallest Missing Multiple of K</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <strong>smallest positive multiple</strong> of <code>k</code> that is <strong>missing</strong> from <code>nums</code>.</p>
+# 4080. Smallest Missing Multiple of K
 
-<p>A <strong>multiple</strong> of <code>k</code> is any positive integer divisible by <code>k</code>.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/smallest-missing-multiple-of-k/)
+[![Topic: Hash Set / Math](https://img.shields.io/badge/Topic-Hash%20Set%20/%20Math-blue)](https://leetcode.com/problems/smallest-missing-multiple-of-k/)
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [8,2,3,4,6], k = 2</span></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "To find the smallest positive multiple of k (i.e. k, 2k, 3k, 4k...) that does not appear in the array: Insert all array elements into a Hash Set. Then check multiples `k, 2k, 3k...` sequentially. The first multiple not present in the set is returned."
 
-<p><strong>Output:</strong> <span class="example-io">10</span></p>
+---
 
-<p><strong>Explanation:</strong></p>
+### 💡 Intuition & Core Insight
+- **Sequential Multiple Step**: Starting from 1*k and incrementing by k guarantees that the first missing element discovered is the smallest possible missing multiple.
 
-<p>The multiples of <code>k = 2</code> are 2, 4, 6, 8, 10, 12... and the smallest multiple missing from <code>nums</code> is 10.</p>
-</div>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [5, 10, 20]`, `k = 5`
+- Check 5: in set
+- Check 10: in set
+- Check 15: NOT in set!
+Result: 15.
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [1,4,7,10,15], k = 5</span></p>
+---
 
-<p><strong>Output:</strong> <span class="example-io">5</span></p>
+### 💻 Optimal Implementations
 
-<p><strong>Explanation:</strong></p>
+#### Java Solution
+```java
+class Solution {
+    public int findSmallestMissingMultiple(int[] nums, int k) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) set.add(num);
 
-<p>The multiples of <code>k = 5</code> are 5, 10, 15, 20... and the smallest multiple missing from <code>nums</code> is 5.</p>
-</div>
+        int multiple = k;
+        while (set.contains(multiple)) {
+            multiple += k;
+        }
+        return multiple;
+    }
+}
+```
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def findSmallestMissingMultiple(self, nums: list[int], k: int) -> int:
+        num_set = set(nums)
+        multiple = k
+        while multiple in num_set:
+            multiple += k
+        return multiple
+```
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 100</code></li>
-	<li><code>1 &lt;= nums[i] &lt;= 100</code></li>
-	<li><code>1 &lt;= k &lt;= 100</code></li>
-</ul>
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Building set takes O(N); while loop executes at most N + 1 times with O(1) set lookups.
+- **Space Complexity**: $\mathcal{O}(N)$ — Hash set stores up to N elements.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. k is missing: returns k immediately in step 1.
+2. Array contains no multiples of k: returns k.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if array elements are already sorted?* Binary search or step pointers without a hash set.

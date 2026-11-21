@@ -1,36 +1,93 @@
-<h2><a href="https://leetcode.com/problems/maximum-product-difference-between-two-pairs">Maximum Product Difference Between Two Pairs</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>The <strong>product difference</strong> between two pairs <code>(a, b)</code> and <code>(c, d)</code> is defined as <code>(a * b) - (c * d)</code>.</p>
+# 2042. Maximum Product Difference Between Two Pairs
 
-<ul>
-	<li>For example, the product difference between <code>(5, 6)</code> and <code>(2, 7)</code> is <code>(5 * 6) - (2 * 7) = 16</code>.</li>
-</ul>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/maximum-product-difference-between-two-pairs/)
+[![Topic: Greedy / Sorting](https://img.shields.io/badge/Topic-Greedy%20/%20Sorting-blue)](https://leetcode.com/problems/maximum-product-difference-between-two-pairs/)
 
-<p>Given an integer array <code>nums</code>, choose four <strong>distinct</strong> indices <code>w</code>, <code>x</code>, <code>y</code>, and <code>z</code> such that the <strong>product difference</strong> between pairs <code>(nums[w], nums[x])</code> and <code>(nums[y], nums[z])</code> is <strong>maximized</strong>.</p>
+---
 
-<p>Return <em>the <strong>maximum</strong> such product difference</em>.</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "To maximize `(a * b) - (c * d)`: pick `a` and `b` as the two largest numbers in the array, and `c` and `d` as the two smallest numbers. In a single pass, track max1, max2, min1, min2, and return `(max1 * max2) - (min1 * min2)`."
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> nums = [5,6,2,7,4]
-<strong>Output:</strong> 34
-<strong>Explanation:</strong> We can choose indices 1 and 3 for the first pair (6, 7) and indices 2 and 4 for the second pair (2, 4).
-The product difference is (6 * 7) - (2 * 4) = 34.
-</pre>
+### 💡 Intuition & Core Insight
+- **Greedy Extremes**: The product difference is maximized by maximizing the minuend and minimizing the subtrahend.
 
-<p><strong class="example">Example 2:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> nums = [4,2,5,9,7,4,8]
-<strong>Output:</strong> 64
-<strong>Explanation:</strong> We can choose indices 3 and 6 for the first pair (9, 8) and indices 1 and 5 for the second pair (2, 4).
-The product difference is (9 * 8) - (2 * 4) = 64.
-</pre>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [5, 6, 2, 7, 4]`
+- Largest two: 7, 6 -> product = 42
+- Smallest two: 2, 4 -> product = 8
+Difference = 42 - 8 = 34.
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>4 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>
-	<li><code>1 &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>
-</ul>
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+class Solution {
+    public int maxProductDifference(int[] nums) {
+        int max1 = 0, max2 = 0;
+        int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+
+        for (int num : nums) {
+            if (num > max1) {
+                max2 = max1;
+                max1 = num;
+            } else if (num > max2) {
+                max2 = num;
+            }
+
+            if (num < min1) {
+                min2 = min1;
+                min1 = num;
+            } else if (num < min2) {
+                min2 = num;
+            }
+        }
+        return (max1 * max2) - (min1 * min2);
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+class Solution:
+    def maxProductDifference(self, nums: list[int]) -> int:
+        max1 = max2 = 0
+        min1 = min2 = float('inf')
+
+        for num in nums:
+            if num > max1:
+                max2 = max1
+                max1 = num
+            elif num > max2:
+                max2 = num
+
+            if num < min1:
+                min2 = min1
+                min1 = num
+            elif num < min2:
+                min2 = num
+
+        return (max1 * max2) - (min1 * min2)
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — One single pass over the array.
+- **Space Complexity**: $\mathcal{O}(1)$ — Four tracking variables.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Duplicate numbers: duplicates properly fill max1/max2 or min1/min2.
+2. Length 4: computes product difference of all 4 elements.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if negative numbers are allowed?* Consider negative * negative products.

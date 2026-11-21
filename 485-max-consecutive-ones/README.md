@@ -1,25 +1,81 @@
-<h2><a href="https://leetcode.com/problems/max-consecutive-ones">Max Consecutive Ones</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Given a binary array <code>nums</code>, return <em>the maximum number of consecutive </em><code>1</code><em>&#39;s in the array</em>.</p>
+# 485. Max Consecutive Ones
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/max-consecutive-ones/)
+[![Topic: Arrays](https://img.shields.io/badge/Topic-Arrays-blue)](https://leetcode.com/problems/max-consecutive-ones/)
 
-<pre>
-<strong>Input:</strong> nums = [1,1,0,1,1,1]
-<strong>Output:</strong> 3
-<strong>Explanation:</strong> The first two digits or the last three digits are consecutive 1s. The maximum number of consecutive 1s is 3.
-</pre>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Given a binary array, we find the maximum number of consecutive 1s by maintaining a running count. For each element, if it is 1, increment count and update maxCount; if it is 0, reset count to 0."
 
-<pre>
-<strong>Input:</strong> nums = [1,0,1,1,0,1]
-<strong>Output:</strong> 2
-</pre>
+---
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+### 💡 Intuition & Core Insight
+- **Reset on Zero**: A 0 acts as a wall that resets the streak back to 0.
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
-	<li><code>nums[i]</code> is either <code>0</code> or <code>1</code>.</li>
-</ul>
+---
+
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [1, 1, 0, 1, 1, 1]`
+- 1 -> count=1, max=1
+- 1 -> count=2, max=2
+- 0 -> count=0, max=2
+- 1 -> count=1, max=2
+- 1 -> count=2, max=2
+- 1 -> count=3, max=3
+Result: 3.
+
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+class Solution {
+    public int findMaxConsecutiveOnes(int[] nums) {
+        int maxCount = 0;
+        int currentCount = 0;
+        for (int num : nums) {
+            if (num == 1) {
+                currentCount++;
+                maxCount = Math.max(maxCount, currentCount);
+            } else {
+                currentCount = 0;
+            }
+        }
+        return maxCount;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+class Solution:
+    def findMaxConsecutiveOnes(self, nums: list[int]) -> int:
+        max_count = 0
+        current_count = 0
+        for num in nums:
+            if num == 1:
+                current_count += 1
+                max_count = max(max_count, current_count)
+            else:
+                current_count = 0
+        return max_count
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Single linear pass over the binary array.
+- **Space Complexity**: $\mathcal{O}(1)$ — Two integer counters.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Array with only 0s: returns 0.
+2. Array with only 1s: returns nums.length.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if we can flip at most one 0?* Sliding window keeping at most one zero (LeetCode 487).

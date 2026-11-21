@@ -1,53 +1,77 @@
-<h2><a href="https://leetcode.com/problems/find-customer-referee">Find Customer Referee</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Table: <code>Customer</code></p>
+# 584. Find Customer Referee
 
-<pre>
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| id          | int     |
-| name        | varchar |
-| referee_id  | int     |
-+-------------+---------+
-In SQL, id is the primary key column for this table.
-Each row of this table indicates the id of a customer, their name, and the id of the customer who referred them.
-</pre>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/find-customer-referee/)
+[![Topic: SQL](https://img.shields.io/badge/Topic-SQL-blue)](https://leetcode.com/problems/find-customer-referee/)
 
-<p>&nbsp;</p>
+---
 
-<p>Find the names of the customer that are either:</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Find names of customer who are not referred by the customer with id = 2. In SQL three-valued logic, `referee_id != 2` evaluates to UNKNOWN for NULL values! Therefore, we must explicitly check `WHERE referee_id != 2 OR referee_id IS NULL` (or using `COALESCE(referee_id, 0) <> 2`)."
 
-<ol>
-	<li><strong>referred by</strong>&nbsp;any&nbsp;customer with&nbsp;<code>id != 2</code>.</li>
-	<li><strong>not referred by</strong> any customer.</li>
-</ol>
+---
 
-<p>Return the result table in <strong>any order</strong>.</p>
+### 💡 Intuition & Core Insight
+- **SQL NULL Trap**: In SQL, `NULL != 2` is NULL (neither true nor false). Omitting the NULL check silently filters out all customers who have no referee.
 
-<p>The result format is in the following example.</p>
+---
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: Table with referee_id [null, null, 2, null, 2]
+- Rows with null: referee_id IS NULL -> Included!
+- Rows with 2: referee_id != 2 is False -> Excluded!
+Returns names for customer 1, 2, 4, 5.
 
-<pre>
-<strong>Input:</strong> 
-Customer table:
-+----+------+------------+
-| id | name | referee_id |
-+----+------+------------+
-| 1  | Will | null       |
-| 2  | Jane | null       |
-| 3  | Alex | 2          |
-| 4  | Bill | null       |
-| 5  | Zack | 1          |
-| 6  | Mark | 2          |
-+----+------+------------+
-<strong>Output:</strong> 
-+------+
-| name |
-+------+
-| Will |
-| Jane |
-| Bill |
-| Zack |
-+------+
-</pre>
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+// SQL Solution:
+// SELECT name 
+// FROM Customer 
+// WHERE referee_id != 2 OR referee_id IS NULL;
+
+class Solution {
+    // Java representation of filtering customers not referred by id=2
+    public List<String> findCustomers(int[][] customers, String[] names) {
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < customers.length; i++) {
+            Integer refereeId = customers[i][1];
+            if (refereeId == null || refereeId != 2) {
+                res.add(names[i]);
+            }
+        }
+        return res;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+# SQL:
+# SELECT name FROM Customer WHERE referee_id != 2 OR referee_id IS NULL;
+
+import pandas as pd
+
+def find_customer_referee(customer: pd.DataFrame) -> pd.DataFrame:
+    df = customer[(customer['referee_id'] != 2) | (customer['referee_id'].isna())]
+    return df[['name']]
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Full table scan or index scan over N rows.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant auxiliary filter memory.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. All referee_ids are NULL: all rows returned.
+2. All referee_ids are 2: empty result.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *How to optimize for 100M rows?* Add index on (referee_id, name) or partition.

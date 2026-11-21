@@ -1,51 +1,78 @@
-<h2><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array">Remove Duplicates from Sorted Array</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Given an integer array <code>nums</code> sorted in <strong>non-decreasing order</strong>, remove the duplicates <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank"><strong>in-place</strong></a> such that each unique element appears only <strong>once</strong>. The <strong>relative order</strong> of the elements should be kept the <strong>same</strong>.</p>
+# 26. Remove Duplicates from Sorted Array
 
-<p>Consider the number of <em>unique elements</em> in&nbsp;<code>nums</code> to be <code>k<strong>​​​​​​​</strong></code>​​​​​​​. <meta charset="UTF-8" />After removing duplicates, return the number of unique elements&nbsp;<code>k</code>.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+[![Topic: Two Pointers](https://img.shields.io/badge/Topic-Two%20Pointers-blue)](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
 
-<p><meta charset="UTF-8" />The first&nbsp;<code>k</code>&nbsp;elements of&nbsp;<code>nums</code>&nbsp;should contain the unique numbers in <strong>sorted order</strong>. The remaining elements beyond index&nbsp;<code>k - 1</code>&nbsp;can be ignored.</p>
+---
 
-<p><strong>Custom Judge:</strong></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Given a sorted array, we need to remove duplicates in-place such that each unique element appears once. We use two pointers: a slow pointer `k` pointing to the last confirmed unique slot, and a fast pointer `i` scanning ahead. Whenever `nums[i] != nums[k]`, we increment `k` and write `nums[k] = nums[i]`."
 
-<p>The judge will test your solution with the following code:</p>
+---
 
-<pre>
-int[] nums = [...]; // Input array
-int[] expectedNums = [...]; // The expected answer with correct length
+### 💡 Intuition & Core Insight
+- **Sorted Invariant**: Identical elements are always contiguous in a sorted array.
+- **Slow-Fast Reader/Writer**: The fast pointer reads every element; the slow pointer writes only when a strictly new value is encountered.
 
-int k = removeDuplicates(nums); // Calls your implementation
+---
 
-assert k == expectedNums.length;
-for (int i = 0; i &lt; k; i++) {
-    assert nums[i] == expectedNums[i];
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [0, 0, 1, 1, 1, 2, 2]`
+- k = 0, nums[0] = 0
+- i = 1: nums[1] == 0 (duplicate, skip)
+- i = 2: nums[2] == 1 != nums[k] -> k=1, nums[1]=1
+- i = 3, 4: duplicate 1s (skip)
+- i = 5: nums[5] == 2 != nums[k] -> k=2, nums[2]=2
+Result: k + 1 = 3 unique elements (`[0, 1, 2]`).
+
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        int k = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] != nums[k]) {
+                k++;
+                nums[k] = nums[i];
+            }
+        }
+        return k + 1;
+    }
 }
-</pre>
+```
 
-<p>If all assertions pass, then your solution will be <strong>accepted</strong>.</p>
+#### Python 3 Solution
+```python
+class Solution:
+    def removeDuplicates(self, nums: list[int]) -> int:
+        if not nums:
+            return 0
+        k = 0
+        for i in range(1, len(nums)):
+            if nums[i] != nums[k]:
+                k += 1
+                nums[k] = nums[i]
+        return k + 1
+```
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> nums = [1,1,2]
-<strong>Output:</strong> 2, nums = [1,2,_]
-<strong>Explanation:</strong> Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively.
-It does not matter what you leave beyond the returned k (hence they are underscores).
-</pre>
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Fast pointer scans the array of length N exactly once.
+- **Space Complexity**: $\mathcal{O}(1)$ — In-place modification using constant variables.
 
-<p><strong class="example">Example 2:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> nums = [0,0,1,1,1,2,2,3,3,4]
-<strong>Output:</strong> 5, nums = [0,1,2,3,4,_,_,_,_,_]
-<strong>Explanation:</strong> Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively.
-It does not matter what you leave beyond the returned k (hence they are underscores).
-</pre>
+### ⚠️ Edge Cases & Interview Traps
+1. Length 1: loop never runs, returns 1.
+2. All identical: loop skips all, returns 1.
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 3 * 10<sup>4</sup></code></li>
-	<li><code>-100 &lt;= nums[i] &lt;= 100</code></li>
-	<li><code>nums</code> is sorted in <strong>non-decreasing</strong> order.</li>
-</ul>
+### 💬 Follow-Up Questions You Might Get
+- *What if at most two duplicates are allowed?* Compare with nums[k - 1] (LeetCode 80).

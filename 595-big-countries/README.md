@@ -1,54 +1,73 @@
-<h2><a href="https://leetcode.com/problems/big-countries">Big Countries</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Table: <code>World</code></p>
+# 595. Big Countries
 
-<pre>
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| name        | varchar |
-| continent   | varchar |
-| area        | int     |
-| population  | int     |
-| gdp         | bigint  |
-+-------------+---------+
-name is the primary key (column with unique values) for this table.
-Each row of this table gives information about the name of a country, the continent to which it belongs, its area, the population, and its GDP value.
-</pre>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/big-countries/)
+[![Topic: SQL](https://img.shields.io/badge/Topic-SQL-blue)](https://leetcode.com/problems/big-countries/)
 
-<p>&nbsp;</p>
+---
 
-<p>A country is <strong>big</strong> if:</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "A country is big if it has an area of at least 3,000,000 sq km or a population of at least 25,000,000. In SQL: `SELECT name, population, area FROM World WHERE area >= 3000000 OR population >= 25000000`. Using `UNION` can also allow MySQL to utilize separate indexes on area and population."
 
-<ul>
-	<li>it has an area of at least&nbsp;three million (i.e., <code>3000000 km<sup>2</sup></code>), or</li>
-	<li>it has a population of at least&nbsp;twenty-five million (i.e., <code>25000000</code>).</li>
-</ul>
+---
 
-<p>Write a solution to find the name, population, and area of the <strong>big countries</strong>.</p>
+### 💡 Intuition & Core Insight
+- **Simple Boolean Predicate**: Direct disjunction filter selecting rows meeting either threshold.
 
-<p>Return the result table in <strong>any order</strong>.</p>
+---
 
-<p>The result format is in the following example.</p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: Country A (area 3M, pop 10M) -> Included. Country B (area 1M, pop 20M) -> Excluded.
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> 
-World table:
-+-------------+-----------+---------+------------+--------------+
-| name        | continent | area    | population | gdp          |
-+-------------+-----------+---------+------------+--------------+
-| Afghanistan | Asia      | 652230  | 25500100   | 20343000000  |
-| Albania     | Europe    | 28748   | 2831741    | 12960000000  |
-| Algeria     | Africa    | 2381741 | 37100000   | 188681000000 |
-| Andorra     | Europe    | 468     | 78115      | 3712000000   |
-| Angola      | Africa    | 1246700 | 20609294   | 100990000000 |
-+-------------+-----------+---------+------------+--------------+
-<strong>Output:</strong> 
-+-------------+------------+---------+
-| name        | population | area    |
-+-------------+------------+---------+
-| Afghanistan | 25500100   | 652230  |
-| Algeria     | 37100000   | 2381741 |
-+-------------+------------+---------+
-</pre>
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+// SQL Solution:
+// SELECT name, population, area 
+// FROM World 
+// WHERE area >= 3000000 OR population >= 25000000;
+
+class Solution {
+    public List<String[]> findBigCountries(String[][] world) {
+        List<String[]> res = new ArrayList<>();
+        for (String[] row : world) {
+            long area = Long.parseLong(row[1]);
+            long pop = Long.parseLong(row[2]);
+            if (area >= 3000000 || pop >= 25000000) {
+                res.add(new String[]{row[0], row[2], row[1]});
+            }
+        }
+        return res;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+# SQL:
+# SELECT name, population, area FROM World WHERE area >= 3000000 OR population >= 25000000;
+
+import pandas as pd
+
+def big_countries(world: pd.DataFrame) -> pd.DataFrame:
+    df = world[(world['area'] >= 3000000) | (world['population'] >= 25000000)]
+    return df[['name', 'population', 'area']]
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Evaluates predicate for N rows.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant filter memory.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Country qualifies under both area and population: included exactly once.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *Why use UNION over OR in older MySQL engines?* UNION enables index merge when separate single-column indexes exist.

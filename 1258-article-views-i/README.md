@@ -1,49 +1,78 @@
-<h2><a href="https://leetcode.com/problems/article-views-i">Article Views I</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Table: <code>Views</code></p>
+# 1258. Article Views I
 
-<pre>
-+---------------+---------+
-| Column Name   | Type    |
-+---------------+---------+
-| article_id    | int     |
-| author_id     | int     |
-| viewer_id     | int     |
-| view_date     | date    |
-+---------------+---------+
-There is no primary key (column with unique values) for this table, the table may have duplicate rows.
-Each row of this table indicates that some viewer viewed an article (written by some author) on some date. 
-Note that equal author_id and viewer_id indicate the same person.
-</pre>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/article-views-i/)
+[![Topic: SQL](https://img.shields.io/badge/Topic-SQL-blue)](https://leetcode.com/problems/article-views-i/)
 
-<p>&nbsp;</p>
+---
 
-<p>Write a solution to find all the authors that viewed at least one of their own articles.</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Find all the authors that viewed at least one of their own articles. An author views their own article when `author_id = viewer_id`. We select distinct author_id aliased as `id` and sort in ascending order: `SELECT DISTINCT author_id AS id FROM Views WHERE author_id = viewer_id ORDER BY id ASC`."
 
-<p>Return the result table sorted by <code>id</code> in ascending order.</p>
+---
 
-<p>The result format is in the following example.</p>
+### 💡 Intuition & Core Insight
+- **Self-Referential Column Equality**: Comparing two columns in the same row filters self-views.
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> 
-Views table:
-+------------+-----------+-----------+------------+
-| article_id | author_id | viewer_id | view_date  |
-+------------+-----------+-----------+------------+
-| 1          | 3         | 5         | 2019-08-01 |
-| 1          | 3         | 6         | 2019-08-02 |
-| 2          | 7         | 7         | 2019-08-01 |
-| 2          | 7         | 6         | 2019-08-02 |
-| 4          | 7         | 1         | 2019-07-22 |
-| 3          | 4         | 4         | 2019-07-21 |
-| 3          | 4         | 4         | 2019-07-21 |
-+------------+-----------+-----------+------------+
-<strong>Output:</strong> 
-+------+
-| id   |
-+------+
-| 4    |
-| 7    |
-+------+
-</pre>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: Views table with pairs (author_id, viewer_id) = (3, 4), (7, 7), (7, 6), (4, 4)
+- (7, 7): match!
+- (4, 4): match!
+Output: `[4, 7]` in ascending order.
+
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+// SQL:
+// SELECT DISTINCT author_id AS id 
+// FROM Views 
+// WHERE author_id = viewer_id 
+// ORDER BY id ASC;
+
+class Solution {
+    public List<Integer> articleViews(int[][] views) {
+        Set<Integer> authors = new TreeSet<>();
+        for (int[] v : views) {
+            if (v[1] == v[2]) { // author_id == viewer_id
+                authors.add(v[1]);
+            }
+        }
+        return new ArrayList<>(authors);
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+# SQL:
+# SELECT DISTINCT author_id AS id FROM Views WHERE author_id = viewer_id ORDER BY id ASC;
+
+import pandas as pd
+
+def article_views(views: pd.DataFrame) -> pd.DataFrame:
+    self_views = views[views['author_id'] == views['viewer_id']]
+    unique_authors = self_views['author_id'].unique()
+    unique_authors.sort()
+    return pd.DataFrame({'id': unique_authors})
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N \log N)$ — Sorting unique author IDs in ascending order.
+- **Space Complexity**: $\mathcal{O}(N)$ — Set/DataFrame storing unique IDs.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. No author viewed their own article: returns empty result set.
+2. Same author viewed their article multiple times: DISTINCT ensures single entry.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if we want authors who viewed more than 3 of their articles?* Add `GROUP BY author_id HAVING COUNT(DISTINCT article_id) >= 3`.

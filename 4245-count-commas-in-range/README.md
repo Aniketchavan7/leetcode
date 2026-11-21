@@ -1,42 +1,71 @@
-<h2><a href="https://leetcode.com/problems/count-commas-in-range">Count Commas in Range</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>You are given an integer <code>n</code>.</p>
+# 4245. Count Commas in Range
 
-<p>Return the <strong>total</strong> number of commas used when writing all integers from <code>[1, n]</code> (inclusive) in <strong>standard</strong> number formatting.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/count-commas-in-range/)
+[![Topic: Math / Digit Counting](https://img.shields.io/badge/Topic-Math%20/%20Digit%20Counting-blue)](https://leetcode.com/problems/count-commas-in-range/)
 
-<p>In <strong>standard</strong> formatting:</p>
+---
 
-<ul>
-	<li>A comma is inserted after <strong>every three</strong> digits from the right.</li>
-	<li>Numbers with <strong>fewer</strong> than 4 digits contain no commas.</li>
-</ul>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "In standard number formatting, commas are placed every three digits from the right: numbers 1..999 have 0 commas, 1,000..999,999 have 1 comma, 1,000,000..999,999,999 have 2 commas, etc. To count commas in range [1, n], count numbers in [1000, n] (each has 1 comma), count numbers in [1000000, n] (each has an additional comma), etc."
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">n = 1002</span></p>
+### 💡 Intuition & Core Insight
+- **Tiered Slicing**: Every power of 1,000 (10^3, 10^6, 10^9) adds exactly one additional comma to every integer above it.
 
-<p><strong>Output:</strong> <span class="example-io">3</span></p>
+---
 
-<p><strong>Explanation:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `n = 1005`
+- Numbers >= 1,000: 1005 - 1000 + 1 = 6 numbers with >= 1 comma
+- Numbers >= 1,000,000: 0
+Total commas = 6.
 
-<p>The numbers <code>&quot;1,000&quot;</code>, <code>&quot;1,001&quot;</code>, and <code>&quot;1,002&quot;</code> each contain one comma, giving a total of 3.</p>
-</div>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 💻 Optimal Implementations
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">n = 998</span></p>
+#### Java Solution
+```java
+class Solution {
+    public long countCommas(long n) {
+        long commas = 0;
+        long threshold = 1000;
+        while (n >= threshold) {
+            commas += (n - threshold + 1);
+            if (threshold > Long.MAX_VALUE / 1000) break;
+            threshold *= 1000;
+        }
+        return commas;
+    }
+}
+```
 
-<p><strong>Output:</strong> <span class="example-io">0</span></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def countCommas(self, n: int) -> int:
+        commas = 0
+        threshold = 1000
+        while n >= threshold:
+            commas += (n - threshold + 1)
+            threshold *= 1000
+        return commas
+```
 
-<p><strong>Explanation:</strong></p>
+---
 
-<p>All numbers from 1 to 998 have fewer than four digits. Therefore, no commas are used.</p>
-</div>
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(\log_{1000}(N))$ — Loop executes at most 5 times for 64-bit numbers.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant auxiliary variables.
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>1 &lt;= n &lt;= 10<sup>5</sup></code></li>
-</ul>
+### ⚠️ Edge Cases & Interview Traps
+1. n < 1000: loop executes 0 times, returns 0.
+2. Exact power of 1000: threshold arithmetic correctly includes the boundary.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *Count commas in arbitrary range [low, high]?* Return countCommas(high) - countCommas(low - 1).

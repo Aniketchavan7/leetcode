@@ -1,37 +1,67 @@
-<h2><a href="https://leetcode.com/problems/single-number">Single Number</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Given a <strong>non-empty</strong>&nbsp;array of integers <code>nums</code>, every element appears <em>twice</em> except for one. Find that single one.</p>
+# 136. Single Number
 
-<p>You must&nbsp;implement a solution with a linear runtime complexity and use&nbsp;only constant&nbsp;extra space.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/single-number/)
+[![Topic: Bit Manipulation / XOR](https://img.shields.io/badge/Topic-Bit%20Manipulation%20/%20XOR-blue)](https://leetcode.com/problems/single-number/)
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [2,2,1]</span></p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Every element appears twice except for one. XOR has three fundamental properties: 1) `x ^ x = 0` (any number XORed with itself cancels to 0). 2) `x ^ 0 = x`. 3) XOR is commutative and associative. Therefore, XORing all numbers together cancels out all pairs, leaving solely the single number in O(N) time and O(1) space."
 
-<p><strong>Output:</strong> <span class="example-io">1</span></p>
-</div>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 💡 Intuition & Core Insight
+- **The Canceling Mirror**: Pairs of duplicate numbers erase each other like matter and antimatter, regardless of the order they appear in the array.
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [4,1,2,1,2]</span></p>
+---
 
-<p><strong>Output:</strong> <span class="example-io">4</span></p>
-</div>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [4, 1, 2, 1, 2]`
+- `4 ^ 1 ^ 2 ^ 1 ^ 2`
+- `= 4 ^ (1 ^ 1) ^ (2 ^ 2)`
+- `= 4 ^ 0 ^ 0 = 4`
+Result: 4.
 
-<p><strong class="example">Example 3:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [1]</span></p>
+### 💻 Optimal Implementations
 
-<p><strong>Output:</strong> <span class="example-io">1</span></p>
-</div>
+#### Java Solution
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int res = 0;
+        for (int num : nums) {
+            res ^= num;
+        }
+        return res;
+    }
+}
+```
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def singleNumber(self, nums: list[int]) -> int:
+        res = 0
+        for num in nums:
+            res ^= num
+        return res
+```
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 3 * 10<sup>4</sup></code></li>
-	<li><code>-3 * 10<sup>4</sup> &lt;= nums[i] &lt;= 3 * 10<sup>4</sup></code></li>
-	<li>Each element in the array appears twice except for one element which appears only once.</li>
-</ul>
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Single linear pass over the array.
+- **Space Complexity**: $\mathcal{O}(1)$ — One single integer accumulator.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Single element [1]: returns 1.
+2. Negative numbers: bitwise XOR handles 2's complement negatives identically.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if every element appears THREE times except one?* Use bitwise counters modulo 3 (LeetCode 137).

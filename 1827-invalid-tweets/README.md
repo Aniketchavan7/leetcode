@@ -1,44 +1,71 @@
-<h2><a href="https://leetcode.com/problems/invalid-tweets">Invalid Tweets</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>Table: <code>Tweets</code></p>
+# 1827. Invalid Tweets
 
-<pre>
-+----------------+---------+
-| Column Name    | Type    |
-+----------------+---------+
-| tweet_id       | int     |
-| content        | varchar |
-+----------------+---------+
-tweet_id is the primary key (column with unique values) for this table.
-content consists of alphanumeric characters, &#39;!&#39;, or &#39; &#39; and no other special characters.
-This table contains all the tweets in a social media app.
-</pre>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/invalid-tweets/)
+[![Topic: SQL](https://img.shields.io/badge/Topic-SQL-blue)](https://leetcode.com/problems/invalid-tweets/)
 
-<p>&nbsp;</p>
+---
 
-<p>Write a solution to find the IDs of the invalid tweets. The tweet is invalid if the number of characters used in the content of the tweet is <strong>strictly greater</strong> than <code>15</code>.</p>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "Find the IDs of invalid tweets whose content exceeds 15 characters. In SQL, use `LENGTH(content) > 15` or `CHAR_LENGTH(content) > 15`: `SELECT tweet_id FROM Tweets WHERE CHAR_LENGTH(content) > 15;`."
 
-<p>Return the result table in <strong>any order</strong>.</p>
+---
 
-<p>The result format is in the following example.</p>
+### 💡 Intuition & Core Insight
+- **CHAR_LENGTH vs LENGTH**: In multi-byte character sets (UTF-8), `CHAR_LENGTH` counts characters while `LENGTH` counts bytes. For character limit validation, `CHAR_LENGTH` is correct.
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> 
-Tweets table:
-+----------+-----------------------------------+
-| tweet_id | content                           |
-+----------+-----------------------------------+
-| 1        | Let us Code                       |
-| 2        | More than fifteen chars are here! |
-+----------+-----------------------------------+
-<strong>Output:</strong> 
-+----------+
-| tweet_id |
-+----------+
-| 2        |
-+----------+
-<strong>Explanation:</strong> 
-Tweet 1 has length = 11. It is a valid tweet.
-Tweet 2 has length = 33. It is an invalid tweet.
-</pre>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: Tweet 1: "Vote for Biden" (len 14 <= 15). Tweet 2: "Let us make America great again!" (len 32 > 15) -> Tweet 2 is returned.
+
+---
+
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+// SQL:
+// SELECT tweet_id 
+// FROM Tweets 
+// WHERE CHAR_LENGTH(content) > 15;
+
+class Solution {
+    public List<Integer> invalidTweets(int[] tweetIds, String[] contents) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < tweetIds.length; i++) {
+            if (contents[i].length() > 15) {
+                res.add(tweetIds[i]);
+            }
+        }
+        return res;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+# SQL:
+# SELECT tweet_id FROM Tweets WHERE CHAR_LENGTH(content) > 15;
+
+import pandas as pd
+
+def invalid_tweets(tweets: pd.DataFrame) -> pd.DataFrame:
+    return tweets[tweets['content'].str.len() > 15][['tweet_id']]
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Inspects length of N tweet contents.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant filter memory.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Exactly 15 characters: strictly valid (not > 15).
+2. Empty tweets: length 0 <= 15.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What about Twitter-style weighted character counting (emojis = 2 units)?* Custom UDF or regex counting.

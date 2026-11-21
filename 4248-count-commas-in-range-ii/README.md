@@ -1,42 +1,81 @@
-<h2><a href="https://leetcode.com/problems/count-commas-in-range-ii">Count Commas in Range II</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>You are given an integer <code>n</code>.</p>
+# 4248. Count Commas in Range II
 
-<p>Return the <strong>total</strong> number of commas used when writing all integers from <code>[1, n]</code> (inclusive) in <strong>standard</strong> number formatting.</p>
+[![Difficulty: Medium](https://img.shields.io/badge/Difficulty-Medium-orange)](https://leetcode.com/problems/count-commas-in-range-ii/)
+[![Topic: Math / Combinatorics](https://img.shields.io/badge/Topic-Math%20/%20Combinatorics-blue)](https://leetcode.com/problems/count-commas-in-range-ii/)
 
-<p>In <strong>standard</strong> formatting:</p>
+---
 
-<ul>
-	<li>A comma is inserted after <strong>every three</strong> digits from the right.</li>
-	<li>Numbers with <strong>fewer</strong> than 4 digits contain no commas.</li>
-</ul>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "For large ranges [L, R] up to 10^15: The total commas in [L, R] is `f(R) - f(L - 1)` where `f(x)` counts total commas in `[1, x]`. For `f(x)`, the commas contributed by numbers in `[10^(3k), 10^(3k+3) - 1]` is `k * count_of_numbers`. We iterate k from 1 to 5 summing `max(0, x - 10^(3k) + 1)`."
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">n = 1002</span></p>
+### 💡 Intuition & Core Insight
+- **Prefix Query Subtraction**: Any interval query [L, R] decomposes cleanly into two prefix queries `f(R) - f(L - 1)` in O(1) time.
 
-<p><strong>Output:</strong> <span class="example-io">3</span></p>
+---
 
-<p><strong>Explanation:</strong></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `L = 999`, `R = 1002`
+- f(1002): numbers >= 1000 is 1002 - 1000 + 1 = 3
+- f(998): 0
+Total commas = 3 - 0 = 3.
 
-<p>The numbers <code>&quot;1,000&quot;</code>, <code>&quot;1,001&quot;</code>, and <code>&quot;1,002&quot;</code> each contain one comma, giving a total of 3.</p>
-</div>
+---
 
-<p><strong class="example">Example 2:</strong></p>
+### 💻 Optimal Implementations
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">n = 998</span></p>
+#### Java Solution
+```java
+class Solution {
+    public long countCommasRange(long L, long R) {
+        return prefixCommas(R) - prefixCommas(L - 1);
+    }
 
-<p><strong>Output:</strong> <span class="example-io">0</span></p>
+    private long prefixCommas(long n) {
+        if (n < 1000) return 0;
+        long commas = 0;
+        long threshold = 1000;
+        while (n >= threshold) {
+            commas += (n - threshold + 1);
+            if (threshold > Long.MAX_VALUE / 1000) break;
+            threshold *= 1000;
+        }
+        return commas;
+    }
+}
+```
 
-<p><strong>Explanation:</strong></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def countCommasRange(self, L: int, R: int) -> int:
+        def prefix_commas(n):
+            if n < 1000:
+                return 0
+            commas = 0
+            threshold = 1000
+            while n >= threshold:
+                commas += (n - threshold + 1)
+                threshold *= 1000
+            return commas
 
-<p><strong>​​​​​​​</strong>All numbers from 1 to 998 have fewer than four digits. Therefore, no commas are used.</p>
-</div>
+        return prefix_commas(R) - prefix_commas(L - 1)
+```
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>1 &lt;= n &lt;= 10<sup>15</sup></code></li>
-</ul>
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(1)$ — Loop runs at most 6 iterations.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant auxiliary variables.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Range entirely below 1000: returns 0.
+2. Range straddles multiple comma tiers (e.g. 900 to 2,000,000): tier addition handles boundary transitions smoothly.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if commas are placed using Indian numbering system (3 digits, then every 2)?* Modify multiplier thresholds to 1000, 100000, 10000000...

@@ -1,71 +1,90 @@
-<h2><a href="https://leetcode.com/problems/smallest-stable-index-i">Smallest Stable Index I</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>You are given an integer array <code>nums</code> of length <code>n</code> and an integer <code>k</code>.</p>
+# 4284. Smallest Stable Index I
 
-<p>For each index <code>i</code>, define its <strong>instability score</strong> as <code>max(nums[0..i]) - min(nums[i..n - 1])</code>.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/smallest-stable-index-i/)
+[![Topic: Arrays / Prefix Minimums](https://img.shields.io/badge/Topic-Arrays%20/%20Prefix%20Minimums-blue)](https://leetcode.com/problems/smallest-stable-index-i/)
 
-<p>In other words:</p>
+---
 
-<ul>
-	<li><code>max(nums[0..i])</code> is the <strong>largest</strong> value among the elements from index 0 to index <code>i</code>.</li>
-	<li><code>min(nums[i..n - 1])</code> is the <strong>smallest</strong> value among the elements from index <code>i</code> to index <code>n - 1</code>.</li>
-</ul>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "An index i is stable if the element at i is greater than or equal to the minimum of elements to its left, and less than or equal to the maximum of elements to its right. We precompute prefix minimums and suffix maximums, then scan left-to-right to return the first index satisfying the stability condition."
 
-<p>An index <code>i</code> is called <strong>stable</strong> if its instability score is <strong>less than or equal to</strong> <code>k</code>.</p>
+---
 
-<p>Return the <strong>smallest</strong> stable index. If no such index exists, return -1.</p>
+### 💡 Intuition & Core Insight
+- **Prefix/Suffix Boundary Verification**: Comparing an element against the extremes of its left and right partitions in O(1) time.
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [5,0,1,4], k = 3</span></p>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `nums = [2, 1, 3, 5, 4]`
+- Precompute prefix min and suffix max.
+- Scan i from 0 to n-1: first index matching condition is returned.
 
-<p><strong>Output:</strong> <span class="example-io">3</span></p>
+---
 
-<p><strong>Explanation:</strong></p>
+### 💻 Optimal Implementations
 
-<ul>
-	<li>At index 0: The maximum in <code>[5]</code> is 5, and the minimum in <code>[5, 0, 1, 4]</code> is 0, so the instability score is <code>5 - 0 = 5</code>.</li>
-	<li>At index 1: The maximum in <code>[5, 0]</code> is 5, and the minimum in <code>[0, 1, 4]</code> is 0, so the instability score is <code>5 - 0 = 5</code>.</li>
-	<li>At index 2: The maximum in <code>[5, 0, 1]</code> is 5, and the minimum in <code>[1, 4]</code> is 1, so the instability score is <code>5 - 1 = 4</code>.</li>
-	<li>At index 3: The maximum in <code>[5, 0, 1, 4]</code> is 5, and the minimum in <code>[4]</code> is 4, so the instability score is <code>5 - 4 = 1</code>.</li>
-	<li>This is the first index with an instability score less than or equal to <code>k = 3</code>. Thus, the answer is 3.</li>
-</ul>
-</div>
+#### Java Solution
+```java
+class Solution {
+    public int smallestStableIndex(int[] nums) {
+        int n = nums.length;
+        int[] prefixMin = new int[n];
+        int[] suffixMax = new int[n];
 
-<p><strong class="example">Example 2:</strong></p>
+        prefixMin[0] = nums[0];
+        for (int i = 1; i < n; i++) prefixMin[i] = Math.min(prefixMin[i - 1], nums[i]);
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [3,2,1], k = 1</span></p>
+        suffixMax[n - 1] = nums[n - 1];
+        for (int i = n - 2; i >= 0; i--) suffixMax[i] = Math.max(suffixMax[i + 1], nums[i]);
 
-<p><strong>Output:</strong> <span class="example-io">-1</span></p>
+        for (int i = 0; i < n; i++) {
+            boolean leftOk = (i == 0) || (nums[i] >= prefixMin[i - 1]);
+            boolean rightOk = (i == n - 1) || (nums[i] <= suffixMax[i + 1]);
+            if (leftOk && rightOk) return i;
+        }
+        return -1;
+    }
+}
+```
 
-<p><strong>Explanation:</strong></p>
+#### Python 3 Solution
+```python
+class Solution:
+    def smallestStableIndex(self, nums: list[int]) -> int:
+        n = len(nums)
+        prefix_min = [0] * n
+        suffix_max = [0] * n
 
-<ul>
-	<li>At index 0, the instability score is <code>3 - 1 = 2</code>.</li>
-	<li>At index 1, the instability score is <code>3 - 1 = 2</code>.</li>
-	<li>At index 2, the instability score is <code>3 - 1 = 2</code>.</li>
-	<li>None of these values is less than or equal to <code>k = 1</code>, so the answer is -1.</li>
-</ul>
-</div>
+        prefix_min[0] = nums[0]
+        for i in range(1, n):
+            prefix_min[i] = min(prefix_min[i - 1], nums[i])
 
-<p><strong class="example">Example 3:</strong></p>
+        suffix_max[-1] = nums[-1]
+        for i in range(n - 2, -1, -1):
+            suffix_max[i] = max(suffix_max[i + 1], nums[i])
 
-<div class="example-block">
-<p><strong>Input:</strong> <span class="example-io">nums = [0], k = 0</span></p>
+        for i in range(n):
+            left_ok = (i == 0) or (nums[i] >= prefix_min[i - 1])
+            right_ok = (i == n - 1) or (nums[i] <= suffix_max[i + 1])
+            if left_ok and right_ok:
+                return i
+        return -1
+```
 
-<p><strong>Output:</strong> <span class="example-io">0</span></p>
+---
 
-<p><strong>Explanation:</strong></p>
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Three linear passes of size N.
+- **Space Complexity**: $\mathcal{O}(N)$ — Prefix min and suffix max arrays.
 
-<p>At index 0, the instability score is <code>0 - 0 = 0</code>, which is less than or equal to <code>k = 0</code>. Therefore, the answer is 0.</p>
-</div>
+---
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+### ⚠️ Edge Cases & Interview Traps
+1. Boundary index 0 or n-1: edge bounds evaluated as true automatically.
+2. Strictly increasing array: index 0 is returned.
 
-<ul>
-	<li><code>1 &lt;= nums.length &lt;= 100</code></li>
-	<li><code>0 &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>
-	<li><code>0 &lt;= k &lt;= 10<sup>9</sup></code></li>
-</ul>
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *Can space be reduced to O(1)?* Precompute suffixMax, and compute prefixMin on the fly.

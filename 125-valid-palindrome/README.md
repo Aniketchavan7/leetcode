@@ -1,37 +1,84 @@
-<h2><a href="https://leetcode.com/problems/valid-palindrome">Valid Palindrome</a></h2> <img src='https://img.shields.io/badge/Difficulty-Easy-brightgreen' alt='Difficulty: Easy' /><hr><p>A phrase is a <strong>palindrome</strong> if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.</p>
+# 125. Valid Palindrome
 
-<p>Given a string <code>s</code>, return <code>true</code><em> if it is a <strong>palindrome</strong>, or </em><code>false</code><em> otherwise</em>.</p>
+[![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-brightgreen)](https://leetcode.com/problems/valid-palindrome/)
+[![Topic: Two Pointers](https://img.shields.io/badge/Topic-Two%20Pointers-blue)](https://leetcode.com/problems/valid-palindrome/)
 
-<p>&nbsp;</p>
-<p><strong class="example">Example 1:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> s = &quot;A man, a plan, a canal: Panama&quot;
-<strong>Output:</strong> true
-<strong>Explanation:</strong> &quot;amanaplanacanalpanama&quot; is a palindrome.
-</pre>
+### 🎯 How to Explain This to an Interviewer (The 30-Second Pitch)
+> "A phrase is a palindrome if after converting all uppercase letters to lowercase and removing all non-alphanumeric characters, it reads the same forward and backward. We place two pointers at opposite ends of the string. Both pointers skip non-alphanumeric characters, and we compare characters case-insensitively. If any mismatch occurs, it is not a palindrome."
 
-<p><strong class="example">Example 2:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> s = &quot;race a car&quot;
-<strong>Output:</strong> false
-<strong>Explanation:</strong> &quot;raceacar&quot; is not a palindrome.
-</pre>
+### 💡 Intuition & Core Insight
+- **In-Place Two Pointers**: Avoids creating a new cleaned string, saving O(N) allocation space.
+- **Early Exit**: Fails immediately on the first mismatch instead of pre-filtering the entire string.
 
-<p><strong class="example">Example 3:</strong></p>
+---
 
-<pre>
-<strong>Input:</strong> s = &quot; &quot;
-<strong>Output:</strong> true
-<strong>Explanation:</strong> s is an empty string &quot;&quot; after removing non-alphanumeric characters.
-Since an empty string reads the same forward and backward, it is a palindrome.
-</pre>
+### 🔍 Step-by-Step Visual Dry Run
+**Input**: `"A man, a plan, a canal: Panama"`
+- L='A', R='a' -> match ('a'=='a') -> L++, R--
+- L=' ', skip -> L='m'. R='m' -> match -> L++, R--
+- Both pointers converge in the center without mismatch -> True.
 
-<p>&nbsp;</p>
-<p><strong>Constraints:</strong></p>
+---
 
-<ul>
-	<li><code>1 &lt;= s.length &lt;= 2 * 10<sup>5</sup></code></li>
-	<li><code>s</code> consists only of printable ASCII characters.</li>
-</ul>
+### 💻 Optimal Implementations
+
+#### Java Solution
+```java
+class Solution {
+    public boolean isPalindrome(String s) {
+        int left = 0, right = s.length() - 1;
+        while (left < right) {
+            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) {
+                left++;
+            }
+            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) {
+                right--;
+            }
+            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+}
+```
+
+#### Python 3 Solution
+```python
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        left, right = 0, len(s) - 1
+        while left < right:
+            while left < right and not s[left].isalnum():
+                left += 1
+            while left < right and not s[right].isalnum():
+                right -= 1
+            if s[left].lower() != s[right].lower():
+                return False
+            left += 1
+            right -= 1
+        return True
+```
+
+---
+
+### ⚡ Complexity Analysis
+- **Time Complexity**: $\mathcal{O}(N)$ — Each character is examined by left or right pointer at most once.
+- **Space Complexity**: $\mathcal{O}(1)$ — Constant extra variables, zero string allocations.
+
+---
+
+### ⚠️ Edge Cases & Interview Traps
+1. Empty string or only punctuation "   ": returns True.
+2. Single character: returns True.
+
+---
+
+### 💬 Follow-Up Questions You Might Get
+- *What if at most one character can be deleted?* Branch into two sub-checks when a mismatch is found (LeetCode 680).
