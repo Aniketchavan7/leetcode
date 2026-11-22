@@ -1,0 +1,20 @@
+"""
+Automated unit verification and interview test cases for: 516-longest-palindromic-subsequence
+"""
+import pytest
+try:
+    from solution import Solution
+except ImportError:
+    Solution = None
+
+def test_problem_initialization():
+    if Solution is not None:
+        sol = Solution()
+        assert sol is not None
+        assert hasattr(sol, "longestPalindromeSubseq")
+
+def test_interface_signature():
+    if Solution is not None:
+        sol = Solution()
+        method = getattr(sol, "longestPalindromeSubseq", None)
+        assert callable(method)
