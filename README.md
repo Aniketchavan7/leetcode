@@ -6,6 +6,7 @@
   <p>Each solution is tailored exactly to <em>how you would explain the problem to an interviewer</em>: the 30-second conversational pitch, core intuition, visual dry-run traces, edge cases, follow-up questions, and clean, production-ready solutions in both <strong>Java</strong> and <strong>Python 3</strong>.</p>
 
   <p>
+        <a href="https://github.com/Aniketchavan7/leetcode/stargazers"><img src="https://img.shields.io/github/stars/Aniketchavan7/leetcode?style=for-the-badge&logo=github&color=7aa2f7&labelColor=1a1b26" alt="GitHub Stars" /></a>
     <img src="https://img.shields.io/badge/Total%20Problems-1000-blue?style=for-the-badge" alt="Total Problems: 1000" />
     <img src="https://img.shields.io/badge/Easy-244-brightgreen?style=for-the-badge" alt="Easy" />
     <img src="https://img.shields.io/badge/Medium-551-orange?style=for-the-badge" alt="Medium" />
@@ -14,6 +15,8 @@
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
   </p>
 </div>
+
+> ⭐ **If this 1,000-problem LeetCode study guide aids your interview prep, please star the repository!**
 
 ---
 
